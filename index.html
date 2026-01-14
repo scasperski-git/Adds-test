@@ -54,7 +54,6 @@ button{
   background:#1e88e5;
   color:#fff;
   font-size:16px;
-  cursor:pointer;
 }
 </style>
 </head>
@@ -67,40 +66,38 @@ button{
 <div class="section-title">Agency & Director Information</div>
 
 <label>Agency Name <span class="req">*</span></label>
-<input id="agency" placeholder="ABC DEBT SDN BHD">
+<input id="agency">
 
 <label>Director Name <span class="req">*</span></label>
-<input id="director" placeholder="MR AHMAD BIN ALI">
+<input id="director">
 
 <label>Director Contact No <span class="req">*</span></label>
-<input id="director_contact" placeholder="0123456789">
+<input id="director_contact">
 
 <div class="section-title">Registered Business Address</div>
 
 <label>Address Line 1 <span class="req">*</span></label>
-<input id="addr1" placeholder="NO. 12-1, JALAN TUN PERAK">
+<input id="addr1">
 
 <label>Address Line 2</label>
-<input id="addr2" placeholder="TAMAN PERDANA">
+<input id="addr2">
 
 <label>Postcode <span class="req">*</span></label>
-<input id="postcode" maxlength="5" placeholder="43000">
+<input id="postcode" maxlength="5">
 
 <label>City <span class="req">*</span></label>
-<input id="city" placeholder="KAJANG">
+<input id="city">
 
 <label>State <span class="req">*</span></label>
-<input id="state" placeholder="SELANGOR">
+<input id="state" placeholder="Example: SELANGOR">
 
 <div class="section-title">SSM Address Preview</div>
 <div class="preview" id="addressPreview">—</div>
 
-<br>
-<button onclick="submitForm()">Submit</button>
 </div>
 
 <script>
-const STATE_SUFFIX={
+const STATE_SUFFIX = {
   "SELANGOR":"DARUL EHSAN",
   "PAHANG":"DARUL MAKMUR",
   "PERAK":"DARUL RIDZUAN",
@@ -112,25 +109,40 @@ const STATE_SUFFIX={
   "PERLIS":"INDERA KAYANGAN",
   "SABAH":"",
   "SARAWAK":"",
-  "PULAU PINANG":"",
   "MELAKA":"",
+  "PULAU PINANG":"",
   "WILAYAH PERSEKUTUAN":""
 };
 
+function normalizeState(raw){
+  let s = raw.toUpperCase().trim();
+
+  // buang suffix lama jika user taip sendiri
+  Object.values(STATE_SUFFIX).forEach(sf=>{
+    if(sf && s.endsWith(" "+sf)){
+      s = s.replace(" "+sf,"");
+    }
+  });
+
+  return s;
+}
+
 function updateAddressPreview(){
   let out="";
-  if(agency.value) out+=agency.value.toUpperCase()+"<br>";
-  if(addr1.value) out+=addr1.value.toUpperCase()+"<br>";
-  if(addr2.value) out+=addr2.value.toUpperCase()+"<br>";
-  if(postcode.value||city.value)
-    out+=postcode.value+" "+city.value.toUpperCase()+"<br>";
 
-  let st=state.value.toUpperCase();
+  if(agency.value) out += agency.value.toUpperCase()+"<br>";
+  if(addr1.value) out += addr1.value.toUpperCase()+"<br>";
+  if(addr2.value) out += addr2.value.toUpperCase()+"<br>";
+  if(postcode.value || city.value)
+    out += postcode.value+" "+city.value.toUpperCase()+"<br>";
+
+  let st = normalizeState(state.value);
   if(st){
-    let suffix=STATE_SUFFIX[st]||"";
-    out+=st+(suffix?" "+suffix:"");
+    let suffix = STATE_SUFFIX[st] || "";
+    out += st + (suffix ? " " + suffix : "");
   }
-  addressPreview.innerHTML=out||"—";
+
+  addressPreview.innerHTML = out || "—";
 }
 
 ["agency","addr1","addr2","postcode","city","state"]
@@ -138,10 +150,6 @@ function updateAddressPreview(){
   document.getElementById(id)
     .addEventListener("input",updateAddressPreview);
 });
-
-function submitForm(){
-  alert("Form OK – Ready to connect Google Sheet");
-}
 </script>
 
 </body>
